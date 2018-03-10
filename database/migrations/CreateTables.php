@@ -53,7 +53,7 @@ class CreateTables
             $table->string('name');
             $table->string('logo');
             $table->string('description');
-            $table->string('url');
+            $table->string('website');
             $table->timestamps();
         });
 

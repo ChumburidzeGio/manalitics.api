@@ -29,18 +29,27 @@ $router->get('/', function () {
 
     app(CreateTables::class)->run();
 
+    //Channel
+    $channel = app(App\Models\Channel::class)->create([
+        'slug' => 'booking',
+        'name' => 'Booking.com',
+        'logo' => '',
+        'description' => '',
+        'website' => 'https://www.booking.com/'
+    ]);
+
     //Properties
     $property = app(App\Models\Property::class)->create([
         'name' => 'Hotel Tbilisi',
     ]);
 
-    $property->attachExId('booking', 12);
+    $property->attachExId($channel->slug, 12);
 
     $property->exIds();
 
-    $property->hasExId('booking', 12);
+    $property->hasExId($channel->slug, 12);
 
-    $property->removeExId('booking');
+    $property->removeExId($channel->slug);
 
     //User
     $user = app(App\Models\User::class)->create([
@@ -57,14 +66,14 @@ $router->get('/', function () {
 
     //Room
     $room = $property->rooms()->create([
-        'name' => 'Double room for couple',
+        'name' => 'Double',
         'price' => "15.25",
         'unit' => 'd',
         'currency' => 'USD',
         'size' => 2
     ]);
 
-    $room->attachExId('booking', 1560);
+    $room->attachExId($channel->slug, 1560);
 
     //Booking
     $room->newBooking($user, '2017-07-05 12:44:12', '2017-07-10 18:30:11');
