@@ -2,6 +2,9 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
+use Silber\Bouncer\Bouncer;
+use App\Models\User;
+
 try {
     (new Dotenv\Dotenv(__DIR__.'/../'))->load();
 } catch (Dotenv\Exception\InvalidPathException $e) {
@@ -27,6 +30,8 @@ $app->withFacades();
 
 $app->withEloquent();
 
+//$app->configure('auth');
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -47,6 +52,19 @@ $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
     App\Console\Kernel::class
 );
+
+$app->singleton(Bouncer::class, function () {
+
+    $bouncer = Bouncer::create();
+
+    $bouncer->useUserModel(User::class);
+
+    return $bouncer;
+});
+
+$app->singleton(Illuminate\Auth\AuthManager::class, function ($app) {
+    return $app->make('auth');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +100,18 @@ $app->routeMiddleware([
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
+//$app->register(Silber\Bouncer\BouncerServiceProvider::class);
+$app->register(Dingo\Api\Provider\LumenServiceProvider::class);
+$app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->register(Clockwork\Support\Lumen\ClockworkServiceProvider::class);
+
+$app['Dingo\Api\Auth\Auth']->extend('oauth', function ($app) {
+    return new Dingo\Api\Auth\Provider\JWT($app['Tymon\JWTAuth\JWTAuth']);
+});
+
+$app['Dingo\Api\Http\RateLimit\Handler']->extend(function ($app) {
+    return new Dingo\Api\Http\RateLimit\Throttle\Authenticated;
+});
 
 /*
 |--------------------------------------------------------------------------

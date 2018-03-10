@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\Authenticatable;
-use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use App\ModelExtensions\Bookable\HasBookings;
 
-class Guest extends Model implements AuthenticatableContract, AuthorizableContract
+
+class Guest extends Model
 {
-    use Authenticatable, Authorizable;
+    use HasBookings;
 
     /**
      * The attributes that are mass assignable.
@@ -18,7 +16,7 @@ class Guest extends Model implements AuthenticatableContract, AuthorizableContra
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'display_name', 'phone', 'email', 'default_address_id', 'accepts_marketing'
+        'first_name', 'last_name', 'phone', 'email', 'country'
     ];
 
     /**
@@ -29,43 +27,8 @@ class Guest extends Model implements AuthenticatableContract, AuthorizableContra
     protected $casts = [
         'first_name' => 'string',
         'last_name' => 'string',
-        'display_name' => 'string',
         'phone' => 'string',
         'email' => 'string',
-        'default_address_id' => 'integer',
-        'accepts_marketing' => 'boolean',
+        'country' => 'string',
     ];
-
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-    ];
-
-    /**
-     * Get the default address associated with the guest.
-     */
-    public function default_address()
-    {
-        return $this->hasOne(Address::class, 'id', 'default_address_id');
-    }
-
-    /**
-     * Get the addresses associated with the guest.
-     */
-    public function addresses()
-    {
-        return $this->hasMany(Address::class, 'guest_id');
-    }
-
-    /**
-     * Get the reservations associated with the guest.
-     */
-    public function reservations()
-    {
-        return $this->hasMany(Reservation::class, 'guest_id');
-    }
 }

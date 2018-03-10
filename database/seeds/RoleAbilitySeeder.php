@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Silber\Bouncer\Bouncer;
 
-class DatabaseSeeder extends Seeder
+class RoleAbilitySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,7 +12,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call('PropertyTypeSeeder');
-        $this->call('RoleAbilitySeeder');
+        //
     }
 }

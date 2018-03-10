@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RoomNumber extends Model
+class ForeignIds extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,8 +12,9 @@ class RoomNumber extends Model
      * @var array
      */
     protected $fillable = [
-        'id',
-        'description',
-        'max_capacity',
+        'model_id',
+        'model_type',
+        'service',
+        'foreign_id',
     ];
 }
