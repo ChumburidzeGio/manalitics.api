@@ -1,3 +1,5 @@
-# Database Schema
+# Installation for test
 
-The graph below provides the SQL data types of the content fields.
+Clone the git enter the folder and copy ```.env.example``` to ```.env```.
+In the root directory run ```./vesel init``` and then ```./vesel start``` your are then good ;)
+

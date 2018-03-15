@@ -89,10 +89,10 @@ if [ $# -gt 0 ]; then
         fi
 
         echo "VESSEL: Setting .env Variables"
-        cp .env .env.bak.vessel
+        # cp .env .env.bak.vessel
         $SEDCMD "s/DB_HOST=.*/DB_HOST=mysql/" .env
-        $SEDCMD "s/CACHE_DRIVER=.*/CACHE_DRIVER=redis/" .env
-        $SEDCMD "s/SESSION_DRIVER=.*/SESSION_DRIVER=redis/" .env
+        $SEDCMD "s/CACHE_DRIVER=.*/CACHE_DRIVER=file/" .env
+        $SEDCMD "s/SESSION_DRIVER=.*/SESSION_DRIVER=file/" .env
         $SEDCMD "s/REDIS_HOST=.*/REDIS_HOST=redis/" .env
 
         if [ -f .env.bak ]; then
@@ -107,6 +107,13 @@ if [ $# -gt 0 ]; then
 
         echo "VESSEL: Making vessel command available"
         chmod +x vessel
+
+        echo "VESSEL: Installing composer dependencies"
+        composer install
+
+        echo "VESSEL: Generating the keys"
+        php artisan key:generate
+        php artisan jwt:secret
 
         echo ""
         echo "VESSEL: Complete!"
