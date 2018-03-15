@@ -36,6 +36,10 @@ class CreateTables
         $this->guest();
         $this->user();
         $this->shopping();
+
+        // TODO: So we have to add new table rate_plans with columns: id and name
+        // TODO: Add column base_rates with columns: price, price1, min_stay, max_stay, max_occupancy
+        // TODO: and then to add conditional prices for a weekend f.e. for a certain days or periods of time, occupancy
     }
 
     public function dropTables($tables)
@@ -79,8 +83,6 @@ class CreateTables
             $table->increments('id');
             $table->string('name', 170);
             $table->integer('property_id', false, true);
-            $table->integer('max_people', false, true);
-            $table->integer('max_child', false, true);
             $table->integer('rooms');
             $table->boolean('is_dormitory')->default(false);
             $table->timestamps();

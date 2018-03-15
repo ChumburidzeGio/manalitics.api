@@ -11,8 +11,9 @@ use Silber\Bouncer\Database\HasRolesAndAbilities;
 use App\ModelExtensions\HasForeignIds\HasForeignIds;
 use App\ModelExtensions\Bookable\BookingScopes;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
     use Authenticatable,
         Authorizable,
@@ -91,5 +92,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'starts_at' => $startsAt,
             'ends_at' => $endsAt,
         ]);
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }

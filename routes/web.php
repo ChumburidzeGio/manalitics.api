@@ -123,7 +123,16 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
 
-    $api->group(['prefix' => 'properties/'], function ($api) {
+    $api->group(['prefix' => 'auth/', 'namespace' => 'App\Http\Controllers\Auth'], function ($api) {
+        $api->post('login', 'AuthController@postLogin');
+        $api->group(['middleware' => 'api.auth'], function ($api) {
+            $api->delete('invalidate', 'AuthController@deleteInvalidate');
+            $api->patch('refresh', 'AuthController@patchRefresh');
+            $api->get('user', 'AuthController@getUser');
+        });
+    });
+
+    $api->group(['prefix' => 'properties/', 'middleware' => 'api.auth'], function ($api) {
         $api->get('get', App\Http\Controllers\Property\Get::class);
         $api->get('getTypes', App\Http\Controllers\Property\GetTypes::class);
         $api->post('create', App\Http\Controllers\Property\Create::class);

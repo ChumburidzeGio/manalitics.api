@@ -77,9 +77,9 @@ $app->singleton(Illuminate\Auth\AuthManager::class, function ($app) {
 |
 */
 
-// $app->middleware([
-//    App\Http\Middleware\ExampleMiddleware::class
-// ]);
+ $app->middleware([
+     \Barryvdh\Cors\HandleCors::class,
+ ]);
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
@@ -104,6 +104,7 @@ $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Clockwork\Support\Lumen\ClockworkServiceProvider::class);
+$app->register(Barryvdh\Cors\ServiceProvider::class);
 
 $app['Dingo\Api\Auth\Auth']->extend('oauth', function ($app) {
     return new Dingo\Api\Auth\Provider\JWT($app['Tymon\JWTAuth\JWTAuth']);
@@ -129,5 +130,7 @@ $app->router->group([
 ], function ($router) {
     require __DIR__.'/../routes/web.php';
 });
+
+$app->configure('cors');
 
 return $app;
