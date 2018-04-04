@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Models\RoomType;
+use App\Models\Merchant;
 
 class CreateRoomTypesTable extends Seeder
 {
@@ -12,23 +12,59 @@ class CreateRoomTypesTable extends Seeder
      */
     public function run()
     {
-        $this->updateOrCreate('Apartment');
-        $this->updateOrCreate('Quadruple');
-        $this->updateOrCreate('Suite');
-        $this->updateOrCreate('Triple');
-        $this->updateOrCreate('Twin');
-        $this->updateOrCreate('Double');
-        $this->updateOrCreate('Single');
-        $this->updateOrCreate('Studio');
-        $this->updateOrCreate('Family');
-        $this->updateOrCreate('Dormitory room');
-        $this->updateOrCreate('Bed in Dormitory');
-        $this->updateOrCreate('Bungalow');
-        $this->updateOrCreate('Chalet');
-        $this->updateOrCreate('Holiday home');
-        $this->updateOrCreate('Villa');
-        $this->updateOrCreate('Mobile home');
-        $this->updateOrCreate('Tent');
+        $this->updateOrCreate('/(uber)(.*)(help)(?=.*)/gi', 'UBER', 'transportation', true);
+
+        $this->updateOrCreate('/(SHOPIFY.COM|SHOPIFYCOM)/g', 'SHOPIFY', 'business/hosting', true);
+
+        $this->updateOrCreate('/(FACEBK \*)([A-Z0-9]+)/g', 'Facebook Ads', 'business/advertising', true);
+
+        $this->updateOrCreate('/(Albert Heijn|AH TO GO)\s+([0-9]+)/g', 'Albert Heijn', 'basic', true, [
+            "supermarket",
+            "grocery_or_supermarket",
+            "store",
+            "food",
+            "point_of_interest",
+            "establishment"
+        ]);
+
+        $this->updateOrCreate('/(Gall & Gall)\s+([0-9]+)/g', 'Gall & Gall', 'healthnbeauty', true, [
+            "liquor_store",
+            "store",
+            "point_of_interest",
+            "establishment"
+        ]);
+
+        $this->updateOrCreate('/(Wizz Air Hu)\s+([A-Z_0-9]+)/g', 'Wizz Air', 'travel', true);
+
+        $this->updateOrCreate('/(DIRK VAN DEN BROEK)/g', 'DIRK VAN DEN BROEK', 'basic', true, [
+            "supermarket",
+            "grocery_or_supermarket",
+            "store",
+            "food",
+            "point_of_interest",
+            "establishment"
+        ]);
+
+        $this->updateOrCreate('/(PULL & BEAR)/g', 'PULL & BEAR', 'clothing', true, [
+            "clothing_store",
+            "store",
+            "point_of_interest",
+            "establishment"
+        ]);
+
+        $this->updateOrCreate('/(ETOS)\s+([0-9]+)/g', 'Etos', 'healthnbeauty', true, [
+            "store",
+            "health",
+            "point_of_interest",
+            "establishment"
+        ]);
+
+        $this->updateOrCreate('/(Pearle Opticiens)\s+([0-9]+)/g', 'Pearle Opticiens', 'healthnbeauty', true, [
+            "store",
+            "health",
+            "point_of_interest",
+            "establishment"
+        ]);
     }
 
     /**
@@ -36,19 +72,10 @@ class CreateRoomTypesTable extends Seeder
      *
      * @return void
      */
-    public function updateOrCreate($name_en, $description_en = '', $name_ka = '', $description_ka = '')
+    public function updateOrCreate($pos_id, $title, $category_id, $is_generic, $tags)
     {
-        RoomType::updateOrCreate([
-            'slug' => str_slug($name_en)
-        ], [
-            'en' => [
-                'name' => $name_en,
-                'description' => $description_en,
-            ],
-            'ka' => [
-                'name' => $name_ka,
-                'description' => $description_ka,
-            ],
-        ]);
+        $merchant = Merchant::updateOrCreate([
+            'pos_id' => $pos_id
+        ], compact('title', 'category_id', 'is_generic'));
     }
 }

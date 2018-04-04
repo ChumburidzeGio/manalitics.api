@@ -1,5 +1,9 @@
 <?php
 
+if (!ini_get("auto_detect_line_endings")) {
+    ini_set("auto_detect_line_endings", '1');
+}
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 use Silber\Bouncer\Bouncer;
@@ -105,6 +109,7 @@ $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Clockwork\Support\Lumen\ClockworkServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
+$app->register(Cviebrock\EloquentSluggable\ServiceProvider::class);
 
 $app['Dingo\Api\Auth\Auth']->extend('oauth', function ($app) {
     return new Dingo\Api\Auth\Provider\JWT($app['Tymon\JWTAuth\JWTAuth']);

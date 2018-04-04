@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Channels;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Parsers\BaseClass;
 use App\Parsers\IngPolParser;
 use App\Parsers\IngNldParser;
@@ -16,38 +15,20 @@ use Illuminate\Support\Facades\Cache;
 use App\Models\Transaction;
 use App\Classifiers\PlaceClassifier;
 
-class IngImportFromFile extends Controller
+class ImportFromFile extends Controller
 {
     /**
-     * Get the property types
+     * Import transactions from file
      *
      * @param Request $request
      * @return mixed
      */
     public function __invoke(Request $request)
     {
-        return app(PlaceClassifier::class)->process($request->place);
-
-//        return app('validator')->make([
-//            'type' => 'online_banking',
-//            'bank' => 'tbcbank',
-//            "description" => "Beeline;591815010;თანხა:3.00",
-//        ], [
-//            'type' => 'in:online_banking',
-//            'bank' => 'in:tbcbank',
-//            'description' => 'regex:/([a-zA-Z0-9]+);([0-9]){9};(თანხა:([0-9.]+))/'
-//        ])->passes();
-
-        $parser = $this->getParser($request->bank);
-
-        $transactions = $parser->parse($request->file('csv')->path());
-
-        if($request->has('debug') && $request->debug)
-        {
-            dd($transactions);
-        }
-
-        return $transactions;
+        return $this->getParser($request->bank)->import(
+            $request->file('file')->path(),
+            $request->user()
+        );
     }
 
     private function getParser($bank)
@@ -63,6 +44,16 @@ class IngImportFromFile extends Controller
 
 //    private function proccessDescription($value)
 //    {
+//        return app(PlaceClassifier::class)->process($request->place);
+//        return app('validator')->make([
+//            'type' => 'online_banking',
+//            'bank' => 'tbcbank',
+//            "description" => "Beeline;591815010;თანხა:3.00",
+//        ], [
+//            'type' => 'in:online_banking',
+//            'bank' => 'in:tbcbank',
+//            'description' => 'regex:/([a-zA-Z0-9]+);([0-9]){9};(თანხა:([0-9.]+))/'
+//        ])->passes();
 //        $data = [];
 //
 //        preg_match_all('/([A-Za-z]+:)/', $value, $matches);
