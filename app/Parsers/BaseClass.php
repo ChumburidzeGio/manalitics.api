@@ -1,15 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giorgi
- * Date: 3/31/18
- * Time: 12:10 PM
- */
+
 namespace App\Parsers;
 
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Models\Transaction;
+use Spatie\Regex\Regex;
+use SKAgarwal\GoogleApi\PlacesApi;
 
 class BaseClass
 {
@@ -29,6 +26,10 @@ class BaseClass
 
     protected $headers;
 
+    private $placeApiKeys = [
+        'AIzaSyBCawTXydOcoQA4uzw_OFchbrWqgMV1O_U',
+    ];
+
     /**
      * @param $file
      * @return array
@@ -37,7 +38,7 @@ class BaseClass
     {
         $cells = $this->read($file);
 
-        return $this->normalizeAndFilter($cells);
+        return $this->normalizeAndFilterAll($cells);
     }
 
     /**
@@ -88,34 +89,43 @@ class BaseClass
      * @param $cells
      * @return mixed
      */
-    public function normalizeAndFilter($cells)
+    public function normalizeAndFilterAll($cells)
     {
         $transactions = $cells->map(function ($item) {
 
-            $normalized = $this->normalize($item);
-
-            if(!$normalized) {
-                return null;
-            }
-
-            $normalized = array_merge($normalized, [
-                'bank' => $this->bankName,
-                'amount' => floatval(str_replace(',', '.', $normalized['amount'])),
-                'date' => $this->getDate($normalized['date'], $this->dateFormat),
-            ]);
-
-            if($this->validTransaction($normalized)) {
-
-                return array_only($normalized, [
-                    'bank', 'title', 'date', 'description', 'type',
-                    'amount', 'currency', 'is_expense', 'original'
-                ]);
-            }
-
-            return null;
+            return $this->normalizeAndValidate($item);
         });
 
         return $transactions->filter();
+    }
+
+    /**
+     * @param $item
+     * @return mixed
+     */
+    public function normalizeAndValidate($item)
+    {
+        $normalized = $this->normalize($item);
+
+        if(!$normalized) {
+            return null;
+        }
+
+        $normalized = array_merge($normalized, [
+            'bank' => $this->bankName,
+            'amount' => floatval(str_replace(',', '.', $normalized['amount'])),
+            'date' => $this->getDate($normalized['date'], $this->dateFormat),
+        ]);
+
+        if($this->validTransaction($normalized)) {
+
+            return array_only($normalized, [
+                'bank', 'title', 'date', 'description', 'type',
+                'amount', 'currency', 'is_expense', 'original'
+            ]);
+        }
+
+        return null;
     }
 
     /**
@@ -217,5 +227,136 @@ class BaseClass
     public function getPosId($value)
     {
         return preg_replace('/\s+/', ' ', trim($value, '" '));
+    }
+
+    /**
+     * @param $value
+     * @return mixed
+     */
+    public function unifyPosId($value)
+    {
+        $replacers = [
+            '/(uber|HELPUBER)/' => 'UBER',
+            '/(SHOPIFY)/' => 'SHOPIFY',
+            '/(FACEBK)/' => 'FACEBOOK ADS',
+            '/(Albert Heijn|AH TO GO|AH Campus Diemen)/i' => 'ALBERT HEIJN',
+            '/(Wizz Air)/' => 'WIZZ AIR',
+            '/(Vomar Geuzenpoort)\s+([A-Z_0-9]+)/' => 'VOMAR',
+            '/(DIRK VDBROEK)\s+([A-Z_0-9 ]+)/' => 'DIRK VAN DEN BROEK',
+            '/(BIEDRONKA)/' => 'BIEDRONKA',
+        ];
+
+        foreach ($replacers as $pattern => $replacer)
+        {
+            if(Regex::matchAll($pattern, $value)->hasMatch()) {
+                $value = $replacer;
+            }
+        }
+
+        $value = preg_replace("/[^A-Za-z ]/", '', $value);
+
+        //Remove all words shorter then 3 chars
+        //$value = preg_replace("/(\b\w{1,2}\b\s?)/", '', $value);
+
+        $value = $this->iReplace([
+            'POZNAN POZNA' => 'POZNAN PL',
+            'POZNA POZNAN' => 'POZNAN PL',
+            'PL PL' => 'PL',
+        ], $value);
+
+        $value = $this->getPosId($value);
+
+        return strtoupper($value);
+    }
+
+    /**
+     * @param $replacements
+     * @param $value
+     * @return mixed
+     */
+    public function iReplace($replacements, $value)
+    {
+        foreach ($replacements as $pattern => $replacement) {
+            $value = str_ireplace($pattern, $replacement, $value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param $value
+     * @return mixed
+     */
+    public function unifyType($value)
+    {
+        $type = null;
+
+        $matchers = [
+            '/(BAR|Cafe)/i' => 'food',
+            '/(HOTEL)/' => 'hotel',
+            '/(APTEKA|PHARMACY)/' => 'pharmacy',
+        ];
+
+        foreach ($matchers as $pattern => $match)
+        {
+            if(Regex::matchAll($pattern, $value)->hasMatch()) {
+                $type = $match;
+            }
+        }
+
+        return $type;
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function findInGooglePlaces($name)
+    {
+        $googlePlaces = new PlacesApi($this->getRandomApiKey());
+
+        $response = $googlePlaces->textSearch($name);
+
+        $results = array_get($response, 'results');
+
+        if(!$results) {
+            return $response;
+        }
+
+        $first = array_first($results);
+
+        $photoReference = array_get(array_first(array_get($first, 'photos')), 'photo_reference');
+
+        $photoSrc = $photoReference ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference='.$photoReference.'&sensor=false&key='.$this->getRandomApiKey() : null;
+
+        return [
+            'name' => array_get($first, 'name'),
+            'id' => array_get($first, 'place_id'),
+            'photo_reference' => $photoReference,
+            'photo_src' => $photoSrc,
+            //'photo_blob' => $photoSrc ? addslashes(file_get_contents($photoSrc)) : $photoSrc,
+            'types' => array_get($first, 'types'),
+            'original' => $results,
+        ];
+    }
+
+    private function getRandomApiKey()
+    {
+        return array_random($this->placeApiKeys);
+    }
+
+    /**
+     * @param $bank
+     * @return \Laravel\Lumen\Application|mixed
+     */
+    public function getParser($bank)
+    {
+        $class = array_get([
+            'ing.pl' => IngPolParser::class,
+            'ing.nl' => IngNldParser::class,
+            'tbcbank' => TbcBankParser::class,
+        ], $bank, BaseClass::class);
+
+        return app($class);
     }
 }

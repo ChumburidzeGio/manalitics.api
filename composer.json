@@ -24,7 +24,8 @@
         "cviebrock/eloquent-sluggable": "^4.4",
         "parsecsv/php-parsecsv": "^1.0",
         "phpoffice/phpspreadsheet": "^1.2",
-        "spatie/regex": "^1.2"
+        "spatie/regex": "^1.2",
+        "illuminate/mail": "5.5.35"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

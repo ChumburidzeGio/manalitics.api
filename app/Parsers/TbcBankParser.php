@@ -16,13 +16,13 @@ class TbcBankParser extends BaseClass
 
     public function normalize($item)
     {
+        $type = $this->getType($item['Op. Code'], $item['Description']);
+
         try {
-            list($amount, $currency, $is_expenses) = $this->getAmount($item);
+            list($amount, $currency, $is_expenses) = $this->getAmount($item, $type);
         } catch (\Exception $e) {
             return null;
         }
-
-        $type = $this->getType($item['Op. Code'], $item['Description']);
 
         return [
             'title' => $this->getDescription($item['Description'], $type),
@@ -45,8 +45,9 @@ class TbcBankParser extends BaseClass
         return $value;
     }
 
-    private function getAmount($item)
+    private function getAmount($item, $type)
     {
+        $currency = 'GEL';
         $is_expenses = true;
         $amount = $item['Paid Out'];
 
@@ -55,7 +56,11 @@ class TbcBankParser extends BaseClass
             $amount = $item['Paid In'];
         }
 
-        return [$amount, 'GEL', $is_expenses];
+        if($type === 'pay_terminal') {
+            $currency = Regex::match('/თანხა\s[0-9.]+\s([A-Z]{3})/', $item['Description'])->group(1);
+        }
+
+        return [$amount, $currency, $is_expenses];
     }
 
     private function getType($code, $description)

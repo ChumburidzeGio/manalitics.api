@@ -25,21 +25,12 @@ class ImportFromFile extends Controller
      */
     public function __invoke(Request $request)
     {
-        return $this->getParser($request->bank)->import(
+        $parser = (new BaseClass)->getParser($request->bank);
+
+        return $parser->import(
             $request->file('file')->path(),
             $request->user()
         );
-    }
-
-    private function getParser($bank)
-    {
-        $class = array_get([
-            'ing.pl' => IngPolParser::class,
-            'ing.nl' => IngNldParser::class,
-            'tbcbank' => TbcBankParser::class,
-        ], $bank, BaseClass::class);
-
-        return app($class);
     }
 
 //    private function proccessDescription($value)

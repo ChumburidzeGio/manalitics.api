@@ -2,18 +2,6 @@
 
 use Spatie\Activitylog\Models\Activity;
 
-use Silber\Bouncer\BouncerFacade;
-
-use Roomify\Bat\Unit\Unit;
-use Roomify\Bat\Event\Event;
-use Roomify\Bat\Calendar\Calendar;
-use Roomify\Bat\Store\SqlDBStore;
-use Roomify\Bat\Store\SqlLiteDBStore;
-use Roomify\Bat\Constraint\ConstraintManager;
-use Roomify\Bat\Constraint\MinMaxDaysConstraint;
-use Roomify\Bat\Constraint\CheckInDayConstraint;
-use Roomify\Bat\Constraint\DateConstraint;
-use Roomify\Bat\Test\SetupStore;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -40,4 +28,10 @@ $api->version('v1', function ($api) {
 
     $api->post('import.fromFile', App\Http\Controllers\ImportFromFile::class);
     $api->get('transactions', App\Http\Controllers\Transactions::class);
+    $api->get('transactions.refresh', App\Http\Controllers\TransactionsRefresh::class);
+    $api->get('stats.general', App\Http\Controllers\StatsGeneral::class);
+
+    $api->group(['middleware' => 'api.auth'], function ($api) {
+        $api->get('export.toFile', App\Http\Controllers\ExportToFile::class);
+    });
 });

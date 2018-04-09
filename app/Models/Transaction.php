@@ -10,6 +10,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Carbon\Carbon;
 
 class Transaction extends Model
 {
@@ -20,7 +21,9 @@ class Transaction extends Model
      * @var array
      */
     protected $casts = [
+        'is_expense' => 'boolean',
         'original' => 'array',
+        'date' => 'date',
     ];
 
     /**
@@ -61,4 +64,8 @@ class Transaction extends Model
     protected $hidden = [
         'original', 'created_at', 'updated_at'
     ];
+
+    public function setDateAttribute($value){
+        return $this->attributes['date'] = Carbon::createFromFormat('Y/m/d', $value);
+    }
 }
