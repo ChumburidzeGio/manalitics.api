@@ -48,7 +48,7 @@ class StatsGeneral
             ];
         });
 
-        return $transactions->groupBy('month')->map(function ($items) {
+        return $transactions->groupBy('month')->map(function ($items, $month) {
 
             $expense = $items->where('is_expense', true)->sum('amount');
 
@@ -56,9 +56,15 @@ class StatsGeneral
 
             $change = $income  - $expense;
 
-            return compact('expense', 'income', 'change');
+            $expense = $this->moneyFormat($expense);
 
-        })->all();
+            $income = $this->moneyFormat($income);
+
+            $change = $this->moneyFormat($change);
+
+            return compact('expense', 'income', 'change', 'month');
+
+        })->values()->all();
     }
 
     /**
@@ -79,5 +85,23 @@ class StatsGeneral
         $exchange = $this->rates[$exchangeKey];
 
         return $amount * $exchange;
+    }
+
+    /**
+     * Format the money
+     *
+     * @param $amount
+     * @param $currency
+     * @return float
+     */
+    protected function moneyFormat($amount)
+    {
+        $formated = number_format($amount, 2);
+
+        if(starts_with($formated, '-')) {
+            return '- €' . str_replace('-', '', $formated);
+        }
+
+        return '€' . $formated;
     }
 }
