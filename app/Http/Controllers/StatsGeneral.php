@@ -37,7 +37,7 @@ class StatsGeneral
 
         $banks = explode(',', $request->input('banks', $this->defaultBanks));
 
-        $transactions = Transaction::whereIn('type', $types)->whereIn('bank', $banks)->get();
+        $transactions = Transaction::whereIn('type', $types)->whereIn('bank', $banks)->where('user_id', $request->user()->id)->get();
 
         $transactions = $transactions->map(function ($item) {
             return (object) [
