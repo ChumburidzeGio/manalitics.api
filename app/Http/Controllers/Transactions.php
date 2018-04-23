@@ -12,6 +12,8 @@ class Transactions extends Controller
     {
         //return app(BaseClass::class)->findInGooglePlaces('Salon GATTA CH Poznan PL');
 
+        //return app(BaseClass::class)->findMerchant('Salon GATTA CH Poznan PL');
+        
         return Transaction::where('user_id', $request->user()->id)->orderBy('date', 'desc')->paginate();
 
 //        return Transaction::where('type', 'pay_terminal')->get()->map(function ($item) {

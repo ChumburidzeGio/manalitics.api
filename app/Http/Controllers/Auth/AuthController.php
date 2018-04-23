@@ -44,7 +44,7 @@ class AuthController extends Controller
         }
 
         return $this->response->array([
-            'message' => 'user_authenicated',
+            'message' => 'Succesfully logged in',
             'data' => [
                 'token' => $token,
                 'expiresIn' => 100

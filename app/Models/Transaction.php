@@ -23,7 +23,6 @@ class Transaction extends Model
     protected $casts = [
         'is_expense' => 'boolean',
         'original' => 'array',
-        'date' => 'date',
     ];
 
     /**
@@ -52,7 +51,7 @@ class Transaction extends Model
      * @var array
      */
     protected $fillable = [
-        'bank', 'title', 'date', 'description', 'amount', 'user_id',
+        'bank', 'title', 'date', 'description', 'amount', 'user_id', 'merchant_id',
         'type', 'currency', 'is_expense', 'original'
     ];
 

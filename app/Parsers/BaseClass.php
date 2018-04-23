@@ -7,6 +7,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Models\Transaction;
 use Spatie\Regex\Regex;
 use SKAgarwal\GoogleApi\PlacesApi;
+use App\Models\Merchant;
 
 class BaseClass
 {
@@ -53,9 +54,14 @@ class BaseClass
 
             $transaction['user_id'] = $user->id;
 
+            if($transaction['type'] === 'pay_terminal') {
+                $merchant = $this->findMerchant($transaction['title']);
+                $transaction['merchant_id'] = $merchant->id;
+            }
+
             $transaction = Transaction::updateOrCreate(
                 array_only($transaction, ['bank', 'title', 'date', 'description', 'amount', 'user_id']),
-                array_only($transaction, ['type', 'currency', 'is_expense', 'original'])
+                array_only($transaction, ['type', 'currency', 'is_expense', 'original', 'merchant_id'])
             );
 
             return $transaction;
@@ -157,6 +163,31 @@ class BaseClass
         }
 
         return collect($cells);
+    }
+
+    /**
+     * @param $pos_idname
+     * @return mixed
+     */
+    public function findMerchant($pos_id)
+    {
+        $merchant = Merchant::where('pos_id', $pos_id)->first();
+
+        if($merchant) {
+            return $merchant;
+        }
+
+        $genericMerchants = Merchant::where('is_generic', true)->get();
+
+        foreach($genericMerchants as $merchant) {
+            if(Regex::matchAll($merchant->pos_id, $pos_id)->hasMatch()) {
+                return $merchant;
+            }
+        }
+
+        return Merchant::create([
+            'pos_id' => $pos_id,
+        ]);
     }
 
     /**

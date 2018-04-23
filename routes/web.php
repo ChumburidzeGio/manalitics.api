@@ -35,5 +35,11 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api.auth'], function ($api) {
         $api->get('export.toFile', App\Http\Controllers\ExportToFile::class);
         $api->get('export.toFileParams', App\Http\Controllers\ExportToFileParams::class);
+        $api->get('transaction.details', App\Http\Controllers\TransactionDetails::class);
+        $api->get('cluster.addTransactions', App\Http\Controllers\ClusterAddTransactions::class);
+        $api->get('cluster.removeTransactions', App\Http\Controllers\ClusterRemoveTransactions::class);
+        $api->get('cluster.rename', App\Http\Controllers\ClusterRename::class);
+        $api->get('cluster.remove', App\Http\Controllers\ClusterRemove::class);
+        $api->get('cluster.show', App\Http\Controllers\ClusterShow::class);
     });
 });

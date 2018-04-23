@@ -13,6 +13,7 @@ class V1 extends Migration
      */
     public function up()
     {
+        //$this->down();
         $this->external();
         $this->content();
         $this->user();
@@ -33,6 +34,10 @@ class V1 extends Migration
             'foreign_ids',
 
             'transactions',
+            'merchants',
+            'clusters',
+            'transaction_cluster',
+            'categories',
 
             'users',
             'password_resets',
@@ -73,10 +78,40 @@ class V1 extends Migration
             $table->text('description');
             $table->decimal('amount');
             $table->integer('user_id', 0, 1);
+            $table->integer('merchant_id', 0, 1);
             $table->string('type', 30);
             $table->string('currency', 3);
             $table->boolean('is_expense')->default(true);
             $table->longText('original');
+            $table->timestamps();
+        });
+
+        Schema::create('merchants', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('pos_id', 255);
+            $table->string('title', 255)->nullable();
+            $table->integer('category_id', false, true)->nullable();
+            $table->boolean('is_generic')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('clusters', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('user_id', 0, 1);
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        Schema::create('transaction_cluster', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('cluster_id', 0, 1);
+            $table->integer('transaction_id', 0, 1);
+        });
+
+        Schema::create('categories', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('parent_id', 0, 1)->nullable();
+            $table->string('name');
             $table->timestamps();
         });
     }

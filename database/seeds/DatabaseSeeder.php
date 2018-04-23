@@ -11,7 +11,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call('PropertyTypeSeeder');
-        $this->call('RoleAbilitySeeder');
+        $this->call('UserSeeder');
+        $this->call('MerchantSeeder');
+        //$this->call('RoleAbilitySeeder');
     }
 }

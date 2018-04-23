@@ -110,7 +110,6 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Clockwork\Support\Lumen\ClockworkServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(Cviebrock\EloquentSluggable\ServiceProvider::class);
-$app->register(Maatwebsite\Excel\ExcelServiceProvider::class);
 
 $app['Dingo\Api\Auth\Auth']->extend('oauth', function ($app) {
     return new Dingo\Api\Auth\Provider\JWT($app['Tymon\JWTAuth\JWTAuth']);
