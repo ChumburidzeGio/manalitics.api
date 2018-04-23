@@ -26,11 +26,7 @@ $api->version('v1', function ($api) {
         });
     });
 
-    $api->post('import.fromFile', App\Http\Controllers\ImportFromFile::class);
-    $api->post('search', App\Http\Controllers\Search::class);
-    $api->get('transactions', App\Http\Controllers\Transactions::class);
     $api->get('transactions.refresh', App\Http\Controllers\TransactionsRefresh::class);
-    $api->get('stats.general', App\Http\Controllers\StatsGeneral::class);
 
     $api->group(['middleware' => 'api.auth'], function ($api) {
         $api->get('export.toFile', App\Http\Controllers\ExportToFile::class);
@@ -41,5 +37,9 @@ $api->version('v1', function ($api) {
         $api->get('cluster.rename', App\Http\Controllers\ClusterRename::class);
         $api->get('cluster.remove', App\Http\Controllers\ClusterRemove::class);
         $api->get('cluster.show', App\Http\Controllers\ClusterShow::class);
+        $api->get('stats.general', App\Http\Controllers\StatsGeneral::class);
+        $api->get('transactions', App\Http\Controllers\Transactions::class);
+        $api->post('search', App\Http\Controllers\Search::class);
+        $api->post('import.fromFile', App\Http\Controllers\ImportFromFile::class);
     });
 });
