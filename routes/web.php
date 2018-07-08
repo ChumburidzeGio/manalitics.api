@@ -28,7 +28,7 @@ $api->version('v1', function ($api) {
 
     $api->get('transactions.refresh', App\Http\Controllers\TransactionsRefresh::class);
 
-    $api->group(['middleware' => 'api.auth'], function ($api) {
+$api->group([/*'middleware' => 'api.auth'*/], function ($api) {
         $api->get('export.toFile', App\Http\Controllers\ExportToFile::class);
         $api->get('export.toFileParams', App\Http\Controllers\ExportToFileParams::class);
         $api->get('stats.general', App\Http\Controllers\StatsGeneral::class);

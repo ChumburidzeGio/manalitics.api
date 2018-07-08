@@ -118,7 +118,6 @@ class BaseClass
         ]);
 
         if($this->validTransaction($normalized)) {
-
             return array_only($normalized, [
                 'bank', 'title', 'date', 'description', 'type',
                 'amount', 'currency', 'is_expense', 'original'

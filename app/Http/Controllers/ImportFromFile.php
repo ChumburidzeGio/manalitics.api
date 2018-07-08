@@ -27,41 +27,43 @@ class ImportFromFile extends Controller
     {
         $parser = (new BaseClass)->getParser($request->bank);
 
-        return $parser->import(
-            $request->file('file')->path(),
-            $request->user()
-        );
+        $this->proccessDescription($parser);
+
+        // return $parser->import(
+        //     $request->file('file')->path(),
+        //     $request->user()
+        // );
     }
 
-//    private function proccessDescription($value)
-//    {
-//        return app(PlaceClassifier::class)->process($request->place);
-//        return app('validator')->make([
-//            'type' => 'online_banking',
-//            'bank' => 'tbcbank',
-//            "description" => "Beeline;591815010;თანხა:3.00",
-//        ], [
-//            'type' => 'in:online_banking',
-//            'bank' => 'in:tbcbank',
-//            'description' => 'regex:/([a-zA-Z0-9]+);([0-9]){9};(თანხა:([0-9.]+))/'
-//        ])->passes();
-//        $data = [];
-//
-//        preg_match_all('/([A-Za-z]+:)/', $value, $matches);
-//
-//        $headers = head($matches);
-//
-//        foreach ($headers as $key => $header)
-//        {
-//            $endPosition = strpos($value, $header) + strlen($header);
-//
-//            $next = isset($headers[$key+1]) ? $headers[$key+1] : null;
-//
-//            $nextStartPosition = is_null($next) ? strlen($value) : strpos($value, $next);
-//
-//            $data[$header] = substr($value, $endPosition, ($nextStartPosition - $endPosition));
-//        }
-//    }
+   private function proccessDescription($value)
+   {
+       return app(PlaceClassifier::class)->process($request->place);
+       return app('validator')->make([
+           'type' => 'online_banking',
+           'bank' => 'tbcbank',
+           "description" => "Beeline;591815010;თანხა:3.00",
+       ], [
+           'type' => 'in:online_banking',
+           'bank' => 'in:tbcbank',
+           'description' => 'regex:/([a-zA-Z0-9]+);([0-9]){9};(თანხა:([0-9.]+))/'
+       ])->passes();
+       $data = [];
+
+       preg_match_all('/([A-Za-z]+:)/', $value, $matches);
+
+       $headers = head($matches);
+
+       foreach ($headers as $key => $header)
+       {
+           $endPosition = strpos($value, $header) + strlen($header);
+
+           $next = isset($headers[$key+1]) ? $headers[$key+1] : null;
+
+           $nextStartPosition = is_null($next) ? strlen($value) : strpos($value, $next);
+
+           $data[$header] = substr($value, $endPosition, ($nextStartPosition - $endPosition));
+       }
+   }
 //
 //    private function proccessName($value)
 //    {
