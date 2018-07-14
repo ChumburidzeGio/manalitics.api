@@ -66,7 +66,7 @@ class CSVStatementParser
         $transactions = $this->normalizeAndFilterAll($cells);
 
         return $transactions->map(function($input) use ($user) {
-
+            
             $transaction = Transaction::where('user_id', $user->id)
                 ->where('original', json_encode($input['original']))->first();
 
@@ -74,14 +74,16 @@ class CSVStatementParser
             {
                 $account = $this->getAccount($user);
 
-                $input = array_merge(array_only($input, [
-                    'title', 'date', 'description', 'amount', 'type', 
-                    'currency', 'is_expense', 'user_id', 'original'
-                ]), [
+                $input = array_merge($input, [
                     'user_id' => $user->id,
                     'account_id' => $account->id
                 ]);
+
                 $transaction = Transaction::create($input);
+            }
+
+            else {
+                $transaction->update($input);
             }
 
             return $transaction;
