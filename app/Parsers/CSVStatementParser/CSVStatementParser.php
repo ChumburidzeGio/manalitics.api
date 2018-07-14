@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Parsers;
+namespace App\Parsers\CSVStatementParser;
 
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -11,7 +11,7 @@ use App\Models\Transaction;
 use App\Consts\AllowedTransactionTypes;
 use App\Consts\AllowedBanks;
 
-class BaseClass
+class CSVStatementParser
 {
     protected $bankName;
 
@@ -33,11 +33,11 @@ class BaseClass
      * @param $file
      * @return array
      */
-    public function parse($file)
+    public function parse($file, $user, $bank)
     {
-        $cells = $this->read($file);
+        $parser = $this->getParser($bank);
 
-        return $this->normalizeAndFilterAll($cells);
+        return $parser->import($file, $user);
     }
 
     /**
@@ -61,7 +61,9 @@ class BaseClass
      */
     public function import($file, $user)
     {
-        $transactions = $this->parse($file);
+        $cells = $this->read($file);
+
+        $transactions = $this->normalizeAndFilterAll($cells);
 
         return $transactions->map(function($input) use ($user) {
 
@@ -265,12 +267,12 @@ class BaseClass
         return preg_replace('/\s+/', ' ', trim($value, '" '));
     }
 
-    // /**
-    //  * @param $value
-    //  * @return mixed
-    //  */
-    // public function unifyPosId($value)
-    // {
+    /**
+     * @param $value
+     * @return mixed
+     */
+     public function unifyPosId($value)
+   {
     //     $replacers = [
     //         '/(uber|HELPUBER)/' => 'UBER',
     //         '/(SHOPIFY)/' => 'SHOPIFY',
@@ -379,5 +381,5 @@ class BaseClass
     // private function getRandomApiKey()
     // {
     //     return array_random($this->placeApiKeys);
-    // }
+    }
 }

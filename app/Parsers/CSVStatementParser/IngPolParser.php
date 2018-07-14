@@ -1,9 +1,9 @@
 <?php
-namespace App\Parsers;
+namespace App\Parsers\CSVStatementParser;
 
 use App\Consts\AllowedTransactionTypes;
 
-class IngPolParser extends BaseClass
+class IngPolParser extends CSVStatementParser
 {
     protected $bankName = 'ing.pl';
 

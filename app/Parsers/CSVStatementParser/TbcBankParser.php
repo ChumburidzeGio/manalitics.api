@@ -1,9 +1,9 @@
 <?php
-namespace App\Parsers;
+namespace App\Parsers\CSVStatementParser;
 
 use Spatie\Regex\Regex;
 
-class TbcBankParser extends BaseClass
+class TbcBankParser extends CSVStatementParser
 {
     protected $bankName = 'tbcbank';
 

@@ -1,10 +1,10 @@
 <?php
-namespace App\Parsers;
+namespace App\Parsers\CSVStatementParser;
 
 use App\Consts\AllowedTransactionTypes;
 use Spatie\Regex\Regex;
 use Carbon\Carbon;
-class IngNldParser extends BaseClass
+class IngNldParser extends CSVStatementParser
 {
     protected $bankName = 'ing.nl';
 
