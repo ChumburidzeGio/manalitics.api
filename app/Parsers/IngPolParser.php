@@ -1,11 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giorgi
- * Date: 3/31/18
- * Time: 12:14 PM
- */
 namespace App\Parsers;
+
+use App\Consts\AllowedTransactionTypes;
 
 class IngPolParser extends BaseClass
 {
@@ -99,22 +95,24 @@ class IngPolParser extends BaseClass
         $description = str_slug($item['description']);
         $details = str_slug($item['details']);
 
-        $type = 'miscellaneous';
+        $type = AllowedTransactionTypes::MISCELLANEOUS;
 
         if(str_contains($description, 'platnosc-karta')) {
-            $type = 'pay_terminal';
+            $type = AllowedTransactionTypes::PAY_TERMINAL;
         }
 
         if(str_contains($description, 'wyplata-gotowki')) {
-            $type = 'atm';
+            $type = AllowedTransactionTypes::ATM;
         }
 
         if(str_contains($details, 'przelew')) {
-            $type = str_contains($description, 'przelew-wlasny') ? 'transfer' : 'online_banking';
+            $type = str_contains($description, 'przelew-wlasny') 
+                ? AllowedTransactionTypes::TRANSFER 
+                : AllowedTransactionTypes::ONLINE_BANKING;
         }
 
         if(str_contains($details, 'stzlec')) {
-            $type = 'debt_collection';
+            $type = AllowedTransactionTypes::DEBT_COLLECTION;
         }
 
         return $type;

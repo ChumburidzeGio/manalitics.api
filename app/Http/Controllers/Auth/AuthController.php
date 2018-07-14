@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -45,6 +46,48 @@ class AuthController extends Controller
 
         return $this->response->array([
             'message' => 'user_authenicated',
+            'data' => [
+                'token' => $token,
+                'expiresIn' => 100
+            ]
+        ]);
+    }
+
+    /**
+     * Handle a register request to the application.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function postRegister(Request $request)
+    {
+        try {
+            $this->validate($request, [
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:6',
+            ]);
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => app('hash')->make($request->password),
+            ]);
+            
+            $token = JWTAuth::fromUser($user);
+        }
+
+        catch (ValidationException $e) {
+            return $e->getResponse();
+        }
+
+        catch (JWTException $e) {
+            return $this->response->errorInternal('Could not create token');
+        }
+
+        return $this->response->array([
+            'message' => 'user_registered',
             'data' => [
                 'token' => $token,
                 'expiresIn' => 100

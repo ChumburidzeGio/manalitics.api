@@ -24,15 +24,20 @@ class ImportFromFile extends Controller
      * @return mixed
      */
     public function __invoke(Request $request)
-    {
+    {        
+        $this->validate($request, [
+            'bank' => 'required',
+            'file' => 'required|file'
+        ]);
+
         $parser = (new BaseClass)->getParser($request->bank);
 
-        $this->proccessDescription($parser);
+        // $this->proccessDescription($parser);
 
-        // return $parser->import(
-        //     $request->file('file')->path(),
-        //     $request->user()
-        // );
+        return $parser->import(
+            $request->file('file')->path(),
+            $request->user()
+        );
     }
 
    private function proccessDescription($value)

@@ -1,0 +1,12 @@
+{
+    "uber": "/(uber)(.*)(help)(?=.*)/gi",
+    "shopify": "/(SHOPIFY.COM|SHOPIFYCOM)/g",
+    "facebook_ads": "/(FACEBK \\*)([A-Z0-9]+)/g",
+    "ah": "/(Albert Heijn|AH TO GO)\\s+([0-9]+)/g",
+    "Gal & Gal": "/(Gall & Gall)\\s+([0-9]+)/g",
+    "Wizz Air": "/(Wizz Air Hu)\\s+([A-Z_0-9]+)/g",
+    "Dirk": "/(DIRK VAN DEN BROEK)/g",
+    "P & B": "/(PULL & BEAR)/g",
+    "Etos": "/(ETOS)\\s+([0-9]+)/g",
+    "Pear": "/(Pearle Opticiens)\\s+([0-9]+)/g"
+}

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Parsers;
 
 use Spatie\Regex\Regex;
@@ -67,26 +66,26 @@ class TbcBankParser extends BaseClass
     {
         if($code === 'ISSTR' && starts_with($description, 'POS'))
         {
-            return 'pay_terminal';
+            return AllowedTransactionTypes::PAY_TERMINAL;
         }
 
         if($code === 'ISSTR' && starts_with($description, 'ATM CASH'))
         {
-            return 'atm';
+            return AllowedTransactionTypes::ATM;
         }
 
         return array_get([
-            '*COL*' => 'miscellaneous',
-            '*PCC*' => 'miscellaneous',
-            'TBCPA' => 'miscellaneous',
-            'P2PTR' => 'online_banking',
-            '*IBS*' => 'online_banking',
-            'GMI' => 'miscellaneous',
-            '*MBS*' => 'online_banking',
-            'ADJUO' => 'miscellaneous', //adjustment
-            'FEE' => 'miscellaneous', //Fees like atm cash withdrawing fee
-            'GIB' => 'transfer',
-            'SWIFT' => 'transfer', //swift transfer f.e. salary transfer
-        ], $code, 'miscellaneous');
+            //'*COL*' => 'miscellaneous',
+            //'*PCC*' => 'miscellaneous',
+            //'TBCPA' => 'miscellaneous',
+            'P2PTR' => AllowedTransactionTypes::ONLINE_BANKING,
+            '*IBS*' => AllowedTransactionTypes::ONLINE_BANKING,
+            //'GMI' => 'miscellaneous',
+            '*MBS*' => AllowedTransactionTypes::ONLINE_BANKING,
+            //'ADJUO' => 'miscellaneous', //adjustment
+            //'FEE' => 'miscellaneous', //Fees like atm cash withdrawing fee
+            'GIB' => AllowedTransactionTypes::TRANSFER,
+            'SWIFT' => AllowedTransactionTypes::TRANSFER, //swift transfer f.e. salary transfer
+        ], $code, AllowedTransactionTypes::MISCELLANEOUS);
     }
 }

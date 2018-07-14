@@ -6,7 +6,7 @@ if (!ini_get("auto_detect_line_endings")) {
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-use Silber\Bouncer\Bouncer;
+//use Silber\Bouncer\Bouncer;
 use App\Models\User;
 
 try {
@@ -57,14 +57,14 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
-$app->singleton(Bouncer::class, function () {
+// $app->singleton(Bouncer::class, function () {
 
-    $bouncer = Bouncer::create();
+//     $bouncer = Bouncer::create();
 
-    $bouncer->useUserModel(User::class);
+//     $bouncer->useUserModel(User::class);
 
-    return $bouncer;
-});
+//     return $bouncer;
+// });
 
 $app->singleton(Illuminate\Auth\AuthManager::class, function ($app) {
     return $app->make('auth');
@@ -110,7 +110,7 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Clockwork\Support\Lumen\ClockworkServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(Cviebrock\EloquentSluggable\ServiceProvider::class);
-$app->register(Maatwebsite\Excel\ExcelServiceProvider::class);
+//$app->register(Maatwebsite\Excel\ExcelServiceProvider::class);
 
 $app['Dingo\Api\Auth\Auth']->extend('oauth', function ($app) {
     return new Dingo\Api\Auth\Provider\JWT($app['Tymon\JWTAuth\JWTAuth']);

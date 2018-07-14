@@ -1,13 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: giorgi
- * Date: 3/31/18
- * Time: 12:14 PM
- */
 namespace App\Parsers;
 
-
+use App\Consts\AllowedTransactionTypes;
+use Spatie\Regex\Regex;
+use Carbon\Carbon;
 class IngNldParser extends BaseClass
 {
     protected $bankName = 'ing.nl';
@@ -27,7 +23,7 @@ class IngNldParser extends BaseClass
     {
         return [
             'title' => $item['title'],
-            'date' => $item['date'],
+            'date' => $this->extractDate($item),
             'description' => $item['description'],
             'type' => $this->getCode($item['type']),
             'amount' => $item['amount'],
@@ -40,12 +36,23 @@ class IngNldParser extends BaseClass
     private function getCode($value)
     {
         return array_get([
-            'BA' => 'pay_terminal',
-            'GT' => 'online_banking',
-            'OV' => 'transfer',
-            'IC' => 'debt_collection',
-            'GM' => 'atm',
-            'DV' => 'miscellaneous',
+            'BA' => AllowedTransactionTypes::PAY_TERMINAL,
+            'GT' => AllowedTransactionTypes::ONLINE_BANKING,
+            'OV' => AllowedTransactionTypes::TRANSFER,
+            'IC' => AllowedTransactionTypes::DEBT_COLLECTION,
+            'GM' => AllowedTransactionTypes::ATM,
+            'DV' => AllowedTransactionTypes::MISCELLANEOUS,
         ], $value);
+    }
+
+    private function extractDate($item)
+    {
+        $regex = Regex::match('/Pasvolgnr:([0-9]){0,3} (.*) Transactie/', $item['description']);
+
+        if($regex->hasMatch()) {
+            return $regex->group(2);
+        }
+
+        return $item['date'];
     }
 }
