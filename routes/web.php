@@ -18,25 +18,22 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
 
-    $api->get('transactions.refresh', App\Http\Controllers\TransactionsRefresh::class);
-
     $api->group(['prefix' => 'auth/', 'namespace' => 'App\Http\Controllers\Auth'], function ($api) {
         $api->post('login', 'AuthController@postLogin');
         $api->post('register', 'AuthController@postRegister');
         $api->group(['middleware' => 'api.auth'], function ($api) {
-            $api->delete('invalidate', 'AuthController@deleteInvalidate');
-            $api->patch('refresh', 'AuthController@patchRefresh');
+            $api->post('logout', 'AuthController@deleteInvalidate');
             $api->get('user', 'AuthController@getUser');
         });
     });
 
     $api->get('status', App\Http\Controllers\Status::class);
 
-    $api->group([/*'middleware' => 'api.auth'*/], function ($api) {
+    $api->group(['middleware' => 'api.auth'], function ($api) {
         $api->get('export.toFile', App\Http\Controllers\ExportToFile::class);
-        $api->get('export.toFileParams', App\Http\Controllers\ExportToFileParams::class);
         $api->get('stats.general', App\Http\Controllers\StatsGeneral::class);
         $api->get('transactions', App\Http\Controllers\Transactions::class);
+        $api->post('transaction.update', App\Http\Controllers\TransactionUpdate::class);
         $api->post('search', App\Http\Controllers\Search::class);
         $api->post('import.fromFile', App\Http\Controllers\ImportFromFile::class);
     });

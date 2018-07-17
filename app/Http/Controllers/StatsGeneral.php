@@ -4,17 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-
+use App\Normalizers\CurrencyNormalizer;
 class StatsGeneral
 {
-    protected $rates = [
-        'PLN/EUR' => '0.25',
-        'USD/EUR' => '0.81',
-        'GEL/EUR' => '0.34',
-    ];
-
-    protected $currency = 'EUR';
-
     protected $defaultTypes = 'pay_terminal,atm,transfer,debt_collection,miscellaneous,online_banking';
 
     protected $defaultBanks = 'ing.nl,ing.pl,tbcbank';
@@ -27,75 +19,53 @@ class StatsGeneral
      */
     public function __invoke(Request $request)
     {
-        $types = explode(',', $request->input('types', $this->defaultTypes));
-
-        $banks = explode(',', $request->input('banks', $this->defaultBanks));
-
-        $transactions = Transaction::whereIn('type', $types)->whereIn('bank', $banks)->where('user_id', $request->user()->id)->get();
+        $transactions = Transaction::where('user_id', $request->user()->id)->get();
 
         $transactions = $transactions->map(function ($item) {
+
+            $amount = new CurrencyNormalizer($item->amount, $item->currency);
+
             return (object) [
                 'month' => "{$item->date->year} {$item->date->format('F')}",
-                'amount' => $this->currencyFormat($item->amount, $item->currency),
+                'amount_row' => $amount->result(),
+                'amount' => $amount->shape()->result(),
                 'type' => $item->type,
                 'is_expense' => $item->is_expense,
+                'category' => $item->category,
             ];
         });
 
-        return $transactions->groupBy('month')->map(function ($items, $month) {
+        $change = $transactions->groupBy('month')->map(function ($items, $month) {
 
-            $expense = $items->where('is_expense', true)->sum('amount');
+            $expense = $this->norm(
+                $items->where('is_expense', true)->sum('amount_row')
+            );
 
-            $income = $items->where('is_expense', false)->sum('amount');
+            $income = $this->norm(
+                $items->where('is_expense', false)->sum('amount_row')
+            );
 
-            $change = $income  - $expense;
-
-            $expense = $this->moneyFormat($expense);
-
-            $income = $this->moneyFormat($income);
-
-            $change = $this->moneyFormat($change);
+            $change = $this->norm($items->sum('amount_row'));
 
             return compact('expense', 'income', 'change', 'month');
 
         })->values()->all();
+
+        $categories = $transactions->groupBy('category')->map(function ($items, $category) {
+
+            $expense = $this->norm(
+                $items->where('is_expense', true)->sum('amount_row')
+            );
+
+            return compact('expense', 'category');
+
+        })->values()->all();
+
+        return compact('change', 'categories');
     }
 
-    /**
-     * Format the amount using the application default currency
-     *
-     * @param $amount
-     * @param $currency
-     * @return float
-     */
-    protected function currencyFormat($amount, $currency)
+    protected function norm($amount)
     {
-        if($currency === $this->currency) {
-            return $amount;
-        }
-
-        $exchangeKey = "$currency/$this->currency";
-
-        $exchange = $this->rates[$exchangeKey];
-
-        return $amount * $exchange;
-    }
-
-    /**
-     * Format the money
-     *
-     * @param $amount
-     * @param $currency
-     * @return float
-     */
-    protected function moneyFormat($amount)
-    {
-        $formated = number_format($amount, 2);
-
-        if(starts_with($formated, '-')) {
-            return '- €' . str_replace('-', '', $formated);
-        }
-
-        return '€' . $formated;
+        return (new CurrencyNormalizer($amount))->shape()->result();
     }
 }

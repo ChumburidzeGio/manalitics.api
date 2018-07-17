@@ -70,6 +70,7 @@ class V1 extends Migration
             $table->integer('amount');
             $table->string('type', 30);
             $table->string('currency', 3);
+            $table->string('category', 40);
             $table->boolean('is_expense')->default(true);
             $table->longText('original')->nullable();
             $table->integer('user_id')->unsigned();

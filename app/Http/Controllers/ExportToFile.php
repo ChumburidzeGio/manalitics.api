@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaction;
+use App\Models\Account;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -24,40 +25,48 @@ class ExportToFile extends Controller
      */
     public function __invoke(Request $request)
     {
+        $user = $request->user();
+
+        $accounts = Account::where('user_id', $user->id)->get();
+
         $spreadsheet = new Spreadsheet();
 
-        $transactions = Transaction::where('user_id', $request->user()->id)->limit(7000)->get();
-
-        $this->sheet = $spreadsheet->getSheet(0);
-
-        $this->index = 1;
-
-        $this->append('Bank', 'Title', 'Date', 'Description', 'Amount', 'Type', 'Currency', 'Is Expense');
-
-        foreach ($transactions as $key => $transaction)
+        foreach($accounts as $i => $account)
         {
-            $spreadsheet->getActiveSheet()
-                ->getStyle('C'.$this->index)
-                ->getNumberFormat()
-                ->setFormatCode(NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+            $transactions = $account->transactions()->limit(5000)->get();
 
-            $this->append(
-                $transaction->bank,
-                $transaction->title,
-                Date::PHPToExcel($transaction->date->format('Y-m-d')),
-                $transaction->description,
-                $transaction->amount,
-                $transaction->type,
-                $transaction->currency,
-                $transaction->is_expense
-            );
+            $this->sheet = $spreadsheet->getSheet($i);
+
+            $this->sheet->setTitle($account->name);
+
+            $this->index = 1;
+
+            $this->append('Title', 'Date', 'Description', 'Amount', 'Type', 'Currency', 'Is Expense');
+
+            foreach ($transactions as $transaction)
+            {
+                $this->sheet
+                    ->getStyle('C'.$this->index)
+                    ->getNumberFormat()
+                    ->setFormatCode(NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+    
+                $this->append(
+                    $transaction->title,
+                    Date::PHPToExcel($transaction->date->format('Y-m-d')),
+                    $transaction->description,
+                    $transaction->amount,
+                    $transaction->type,
+                    $transaction->currency,
+                    $transaction->is_expense
+                );
+            }
+            
+            $this->sheet->getColumnDimension('B')->setWidth(30);
+            
+            $this->sheet->getColumnDimension('D')->setWidth(40);
+            
+            $this->sheet->getColumnDimension('F')->setWidth(10);
         }
-
-        $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(30);
-
-        $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(40);
-
-        $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(10);
 
         $filename = 'transactions.xlsx';
 

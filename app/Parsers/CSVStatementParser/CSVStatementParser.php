@@ -9,6 +9,7 @@ use App\Models\Account;
 use App\Models\Transaction;
 //use SKAgarwal\GoogleApi\PlacesApi;
 use App\Consts\AllowedTransactionTypes;
+use App\Consts\AllowedCategories;
 use App\Consts\AllowedBanks;
 
 class CSVStatementParser
@@ -72,14 +73,11 @@ class CSVStatementParser
 
             if(!$transaction)
             {
-                $account = $this->getAccount($user);
-
-                $input = array_merge($input, [
+                $transaction = Transaction::create(array_merge($input, [
                     'user_id' => $user->id,
-                    'account_id' => $account->id
-                ]);
-
-                $transaction = Transaction::create($input);
+                    'account_id' => $this->getAccountId($user),
+                    'category' => AllowedCategories::UNCATEGORIZED
+                ]));
             }
 
             else {
@@ -90,14 +88,16 @@ class CSVStatementParser
         });
     }
 
-    public function getAccount($user) : Account
+    public function getAccountId($user)
     {
-        $name = array_get(AllowedBanks::names(), $code, 'Default');
+        $name = array_get(AllowedBanks::names(), $this->bankName, 'Default');
 
-        return Account::firstOrCreate([
+        $account = Account::firstOrCreate([
             'name' => $name,
             'user_id' => $user->id
         ]);
+
+        return $account->id;
     }
 
     public function validTransaction($transaction) : bool

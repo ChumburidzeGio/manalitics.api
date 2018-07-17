@@ -24,4 +24,12 @@ class Account extends Model
     protected $hidden = [
         'created_at', 'updated_at'
     ];
+
+    /**
+     * Get the transactions for the account.
+     */
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

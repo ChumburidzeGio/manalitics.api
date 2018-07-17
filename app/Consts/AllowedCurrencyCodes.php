@@ -2,10 +2,10 @@
 namespace App\Consts;
 
 class AllowedCurrencyCodes {
-    const EUR = 'eur';
-    const USD = 'usd';
-    const PLN = 'pln';
-    const GEL = 'gel';
+    const EUR = 'EUR';
+    const USD = 'USD';
+    const PLN = 'PLN';
+    const GEL = 'GEL';
 
     public static function all()
     {
@@ -15,6 +15,21 @@ class AllowedCurrencyCodes {
             self::PLN,
             self::GEL,
         ];
+    }
+
+    public static function signs()
+    {
+        return [
+            self::EUR => "€{amount}",
+            self::USD => "\${amount}",
+            self::PLN => "{amount} zl",
+            self::GEL => "{amount} ლარი",
+        ];
+    }
+
+    public static function getSign($currency)
+    {
+        return array_get(self::signs(), $currency);
     }
 
     public static function is_valid($type)

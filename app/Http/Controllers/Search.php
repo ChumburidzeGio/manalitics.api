@@ -17,18 +17,6 @@ class Search extends Controller
             $query = strtolower($request->input('query'));
             $transations->where('title', 'like', "%$query%")->orWhere('description', 'like', "%$query%");
         }
-
-        if($request->has('from')) {
-            $transations->whereDate('date', '>', Carbon::parse($request->from));
-        }
-
-        if($request->has('to')) {
-            $transations->whereDate('date', '<', Carbon::parse($request->to));
-        }
-
-        if($request->has('bank')) {
-            $transations->where('bank', 'LIKE', "%{$request->bank}%");
-        }
         
         return $transations->orderBy('date', 'desc')->limit(50)->get();
     }
