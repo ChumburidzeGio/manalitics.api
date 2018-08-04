@@ -22,8 +22,8 @@ $api->version('v1', function ($api) {
         $api->post('login', 'AuthController@postLogin');
         $api->post('register', 'AuthController@postRegister');
         $api->group(['middleware' => 'api.auth'], function ($api) {
+            $api->post('update', 'AuthController@postUpdate');
             $api->post('logout', 'AuthController@deleteInvalidate');
-            $api->get('user', 'AuthController@getUser');
         });
     });
 
@@ -34,6 +34,7 @@ $api->version('v1', function ($api) {
         $api->get('stats.general', App\Http\Controllers\StatsGeneral::class);
         $api->get('transactions', App\Http\Controllers\Transactions::class);
         $api->post('transaction.update', App\Http\Controllers\TransactionUpdate::class);
+        $api->get('db.currencies', App\Http\Controllers\Currencies::class);
         $api->post('search', App\Http\Controllers\Search::class);
         $api->post('import.fromFile', App\Http\Controllers\ImportFromFile::class);
     });

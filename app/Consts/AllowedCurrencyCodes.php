@@ -20,6 +20,16 @@ class AllowedCurrencyCodes {
     public static function signs()
     {
         return [
+            self::EUR => "€",
+            self::USD => "$",
+            self::PLN => "zl",
+            self::GEL => "₾",
+        ];
+    }
+
+    public static function signsRegex()
+    {
+        return [
             self::EUR => "€{amount}",
             self::USD => "\${amount}",
             self::PLN => "{amount} zl",
@@ -27,9 +37,9 @@ class AllowedCurrencyCodes {
         ];
     }
 
-    public static function getSign($currency)
+    public static function getSignRegex($currency)
     {
-        return array_get(self::signs(), $currency);
+        return array_get(self::signsRegex(), $currency);
     }
 
     public static function is_valid($type)

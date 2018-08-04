@@ -12,9 +12,6 @@
         "spatie/laravel-activitylog": "^2.5",
         "dingo/api": "2.0.0-alpha1",
         "tymon/jwt-auth": "1.*",
-        "roomify/bat": "^1.2",
-        "watson/validating": "^3.1",
-        "itsgoingd/clockwork": "^2.2",
         "barryvdh/laravel-cors": "^0.11.0",
         "shipping-docker/vessel": "^3.0",
         "predis/predis": "^1.1",
@@ -22,7 +19,6 @@
         "league/csv": "^9.1",
         "skagarwal/google-places-api": "^1.2",
         "cviebrock/eloquent-sluggable": "^4.4",
-        "parsecsv/php-parsecsv": "^1.0",
         "phpoffice/phpspreadsheet": "^1.2",
         "spatie/regex": "^1.2",
         "illuminate/mail": "5.5.35"

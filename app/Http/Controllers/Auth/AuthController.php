@@ -12,6 +12,9 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Consts\AllowedCurrencyCodes;
+use App\Rules\Currency;
+use App\Rules\CurrentPassword;
 
 class AuthController extends Controller
 {
@@ -46,11 +49,8 @@ class AuthController extends Controller
         }
 
         return $this->response->array([
-            'message' => 'user_authenicated',
-            'data' => [
-                'token' => $token,
-                'expiresIn' => 100
-            ]
+            'token' => $token,
+            'user' => $this->getUser(),
         ]);
     }
 
@@ -71,6 +71,7 @@ class AuthController extends Controller
             ]);
 
             $user = User::create([
+                'main_currency' => AllowedCurrencyCodes::EUR,
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => app('hash')->make($request->password),
@@ -88,11 +89,8 @@ class AuthController extends Controller
         }
 
         return $this->response->array([
-            'message' => 'user_registered',
-            'data' => [
-                'token' => $token,
-                'expiresIn' => 100
-            ]
+            'token' => $token,
+            'user' => $this->getUser($user),
         ]);
     }
 
@@ -113,34 +111,71 @@ class AuthController extends Controller
     }
 
     /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function patchRefresh()
-    {
-        $token = JWTAuth::parseToken();
-
-        $newToken = $token->refresh();
-
-        return $this->response->array([
-            'message' => 'token_refreshed',
-            'data' => [
-                'token' => $newToken
-            ]
-        ]);
-    }
-
-    /**
      * Get authenticated user.
      *
      * @return \Illuminate\Http\Response
      */
-    public function getUser()
+    private function getUser($user = null)
     {
-        return $this->response->array([
-            'message' => 'authenticated_user',
-            'data' => JWTAuth::parseToken()->authenticate()
-        ]);
+        $user = $user ?? app('auth')->user();
+
+        return [
+            'name' => $user->name,
+            'email' => $user->email,
+            'currency' => $user->currency,
+        ];
+    }
+
+    /**
+     * Update user
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function postUpdate(Request $request)
+    {
+        if($request->has('currency')) {
+            $this->validate($request, [
+                'currency' => ['string', new Currency],
+            ]);
+
+            $update = app('auth')->user()->update([
+                'main_currency' => $request->currency
+            ]);
+        }
+
+        if($request->has('email')) {
+            $this->validate($request, [
+                'email' => ['string', 'email'],
+            ]);
+
+            $update = app('auth')->user()->update([
+                'email' => $request->email
+            ]);
+        }
+
+        if($request->has('curentPassword')) {
+            $this->validate($request, [
+                'curentPassword' => ['string', new CurrentPassword],
+                'newPassword' => 'string',
+            ]);
+
+            $update = app('auth')->user()->update([
+                'password' => app('hash')->make($request->newPassword)
+            ]);
+        }
+
+        if($request->has('name')) {
+            $this->validate($request, [
+                'name' => 'string',
+            ]);
+
+            $update = app('auth')->user()->update([
+                'name' => $request->name
+            ]);
+        }
+
+        return [
+            'updated' => $update,
+        ];
     }
 }

@@ -51,7 +51,7 @@ class CurrencyNormalizer {
     {
         $amount = MoneyNormalizer::toCash($this->result);
 
-        $signRegex = AllowedCurrencyCodes::getSign($this->base);
+        $signRegex = AllowedCurrencyCodes::getSignRegex($this->base);
 
         $isNegative = starts_with($amount, '-');
 

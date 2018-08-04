@@ -107,7 +107,6 @@ $app->register(App\Providers\EventServiceProvider::class);
 //$app->register(Silber\Bouncer\BouncerServiceProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
-$app->register(Clockwork\Support\Lumen\ClockworkServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(Cviebrock\EloquentSluggable\ServiceProvider::class);
 //$app->register(Maatwebsite\Excel\ExcelServiceProvider::class);
