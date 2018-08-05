@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Parsers\BaseClass;
+use App\Normalizers\MoneyNormalizer;
 
 class Transactions extends Controller
 {
@@ -12,7 +13,16 @@ class Transactions extends Controller
     {
         //return app(BaseClass::class)->findInGooglePlaces('Salon GATTA CH Poznan PL');
 
-        return Transaction::where('user_id', $request->user()->id)->orderBy('date', 'desc')->simplePaginate();
+        $transactions = Transaction::where('user_id', $request->user()->id)->orderBy('date', 'desc')->simplePaginate();
+
+        return $transactions->getCollection()->transform(function($item) {
+            $original = $item->only(['id', 'title', 'category', 'currency']);
+
+            return array_merge($original, [
+                'amount' => MoneyNormalizer::toCash($item->amount),
+                'date' => $item->date->format('c'),
+            ]);
+        })->all();
 
 //        return Transaction::where('type', 'pay_terminal')->get()->map(function ($item) {
 //            return array_merge($item->toArray(), [

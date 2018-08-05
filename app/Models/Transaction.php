@@ -33,7 +33,6 @@ class Transaction extends Model
      * @var array
      */
     protected $hidden = [
-        //'original', 
-        'created_at', 'updated_at'
+        'original', 'created_at', 'updated_at'
     ];
 }

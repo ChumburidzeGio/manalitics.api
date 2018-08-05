@@ -33,6 +33,7 @@ $api->version('v1', function ($api) {
         $api->get('export.toFile', App\Http\Controllers\ExportToFile::class);
         $api->get('stats.general', App\Http\Controllers\StatsGeneral::class);
         $api->get('transactions', App\Http\Controllers\Transactions::class);
+        $api->get('transactions.find', App\Http\Controllers\TransactionsFind::class);
         $api->post('transaction.update', App\Http\Controllers\TransactionUpdate::class);
         $api->get('db.currencies', App\Http\Controllers\Currencies::class);
         $api->post('search', App\Http\Controllers\Search::class);

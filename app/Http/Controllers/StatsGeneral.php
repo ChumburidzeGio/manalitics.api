@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Normalizers\CurrencyNormalizer;
+
 class StatsGeneral
 {
     protected $defaultTypes = 'pay_terminal,atm,transfer,debt_collection,miscellaneous,online_banking';
