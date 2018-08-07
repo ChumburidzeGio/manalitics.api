@@ -21,6 +21,18 @@ class AllowedTransactionTypes {
         ];
     }
 
+    public static function names()
+    {
+        return [
+            self::PAY_TERMINAL => 'Pay terminal',
+            self::ONLINE_BANKING => 'Online Banking',
+            self::TRANSFER => 'Transfer',
+            self::DEBT_COLLECTION => 'Debt collection',
+            self::ATM => 'ATM',
+            self::MISCELLANEOUS => 'Miscellaneous',
+        ];
+    }
+
     public static function is_valid($type)
     {
         return in_array($type, self::all());

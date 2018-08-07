@@ -18,25 +18,33 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
 
-    $api->group(['prefix' => 'auth/', 'namespace' => 'App\Http\Controllers\Auth'], function ($api) {
-        $api->post('login', 'AuthController@postLogin');
-        $api->post('register', 'AuthController@postRegister');
-        $api->group(['middleware' => 'api.auth'], function ($api) {
-            $api->post('update', 'AuthController@postUpdate');
-            $api->post('logout', 'AuthController@deleteInvalidate');
+    $api->group(['namespace' => 'App\Http\Controllers'], function ($api) {
+
+        $api->group(['prefix' => 'auth/'], function ($api) {
+            $api->post('login', 'AuthController@postLogin');
+            $api->post('register', 'AuthController@postRegister');
+            $api->group(['middleware' => 'api.auth'], function ($api) {
+                $api->post('update', 'AuthController@postUpdate');
+                $api->post('logout', 'AuthController@deleteInvalidate');
+            });
         });
-    });
 
-    $api->get('status', App\Http\Controllers\Status::class);
+        $api->group(['middleware' => 'api.auth'], function ($api) {
+            $api->get('export.toFile', App\Http\Controllers\ExportToFile::class);
+            $api->get('stats.general', App\Http\Controllers\StatsGeneral::class);
+            $api->get('db.currencies', App\Http\Controllers\Currencies::class);
+        });
 
-    $api->group(['middleware' => 'api.auth'], function ($api) {
-        $api->get('export.toFile', App\Http\Controllers\ExportToFile::class);
-        $api->get('stats.general', App\Http\Controllers\StatsGeneral::class);
-        $api->get('transactions', App\Http\Controllers\Transactions::class);
-        $api->get('transactions.find', App\Http\Controllers\TransactionsFind::class);
-        $api->post('transaction.update', App\Http\Controllers\TransactionUpdate::class);
-        $api->get('db.currencies', App\Http\Controllers\Currencies::class);
-        $api->post('search', App\Http\Controllers\Search::class);
-        $api->post('import.fromFile', App\Http\Controllers\ImportFromFile::class);
+        $api->get('transactions.all', 'TransactionsController@all');
+        $api->get('transactions.find', 'TransactionsController@find');
+        $api->post('transactions.update', 'TransactionsController@update');
+        $api->post('transactions.importFromFile', 'TransactionsController@importFromFile');
+        $api->get('transactions.search', 'TransactionsController@search');
+
+        $api->get('consts.currencies', 'ConstsController@currencies');
+        $api->get('consts.banks', 'ConstsController@banks');
+        $api->get('consts.categories', 'ConstsController@categories');
+        $api->get('consts.transactionTypes', 'ConstsController@transactionTypes');
+
     });
 });

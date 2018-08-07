@@ -201,6 +201,159 @@ class AllowedCategories {
         ];
     }
 
+    public static function names()
+    {
+        return [
+            self::AUTO_TRANSPORT => [
+                'label' => 'Auto & Transport',
+                'options' => [
+                    self::AUTO_TRANSPORT__CAR_RENTAL => 'Car rental',
+                    self::AUTO_TRANSPORT__GAS_FUEL => 'Gas and fuel',
+                    self::AUTO_TRANSPORT__PARKING => 'Parking',
+                    self::AUTO_TRANSPORT__PUBLIC_TRANSPORTATION => 'Public transportation',
+                    self::AUTO_TRANSPORT__SERVICE_PARTS => 'Service and parts',
+                    self::AUTO_TRANSPORT__TAXI => 'Taxi',
+                ]
+            ],
+            self::BILLS_UTILITIES => [
+                'label' => 'Bills and utilities',
+                'options' => [
+                    self::BILLS_UTILITIES__INTERNET => 'Internet',
+                    self::BILLS_UTILITIES__PHONE => 'Phone',
+                    self::BILLS_UTILITIES__TV => 'Television',
+                    self::BILLS_UTILITIES__UTILITIES => 'Utilities',
+                ],
+            ],
+            self::BUSINESS_SERVICES => [
+                'label' => 'Business services',
+                'options' => [
+                    self::BUSINESS_SERVICES__ADVERTISING => 'Advertising',
+                    self::BUSINESS_SERVICES__OFFICE_SUPPLIES => 'Office supplies',
+                    self::BUSINESS_SERVICES__SHIPPING => 'Shipping',
+                ],
+            ],
+            self::EDUCATION => [
+                'label' => 'Education',
+                'options' => [
+                    self::EDUCATION__BOOKS_SUPPLIES => 'Books and supplies',
+                    self::EDUCATION__STUDENT_LOAN => 'Student loan',
+                    self::EDUCATION__TUITION => 'Tuition',
+                ],
+            ],
+            self::ENTERTAINMENT => [
+                'label' => 'Entertainment',
+                'options' => [
+                    self::ENTERTAINMENT__AMUSEMENT => 'Amusement',
+                    self::ENTERTAINMENT__ARTS => 'Arts',
+                    self::ENTERTAINMENT__GAMES => 'Games',
+                    self::ENTERTAINMENT__MOVIES_MUSIC => 'Movies and music',
+                    self::ENTERTAINMENT__NEWSPAPER => 'Newspapers and magazines',
+                ],
+            ],
+            self::FEES_CHARGES => [
+                'label' => 'Fees and charges',
+                'options' => [
+                    self::FEES_CHARGES__PROVIDER_FEE => 'Provider fee',
+                    self::FEES_CHARGES__LOAN => 'Loans',
+                    self::FEES_CHARGES__SERVICE_FEE => 'Service fee',
+                    self::FEES_CHARGES__TAXES => 'Taxes',
+                ],
+            ],
+            self::FOOD_DINING => [
+                'label' => 'Food and dining',
+                'options' => [
+                    self::FOOD_DINING__ALCOHOL_BARS => 'Alcohol and bars',
+                    self::FOOD_DINING__CAFES_RESTAURANTS => 'Cafes and restaurants',
+                    self::FOOD_DINING__GROCERIES => 'Groceries',
+                ],
+            ],
+            self::GIFTS_DONATIONS => [
+                'label' => 'Gifts and donations',
+                'options' => [
+                    self::GIFTS_DONATIONS__CHARITY => 'Charity',
+                    self::GIFTS_DONATIONS__GIFTS => 'Gifts',
+                ],
+            ],
+            self::HEALTH_FITNESS => [
+                'label' => 'Health and fitness',
+                'options' => [
+                    self::HEALTH_FITNESS__DOCTOR => 'Doctor',
+                    self::HEALTH_FITNESS__PERSONAL_CARE => 'Personal care',
+                    self::HEALTH_FITNESS__PHARMACY => 'Pharmacy',
+                    self::HEALTH_FITNESS__SPORTS => 'Sports',
+                    self::HEALTH_FITNESS__WELLNESS => 'Wellness',
+                ],
+            ],
+            self::HOME => [
+                'label' => 'Home',
+                'options' => [
+                    self::HOME__HOME_IMPROVEMENT => 'Home improvement',
+                    self::HOME__HOME_SERVICES => 'Home services',
+                    self::HOME__HOME_SUPPLIES => 'Home supplies',
+                    self::HOME__MORTGAGE_RENT => 'Mortgage and rent',
+                ],
+            ],
+            self::INCOME => [
+                'label' => 'Income',
+                'options' => [
+                    self::INCOME__BONUS => 'Bonus',
+                    self::INCOME__INVESTMENT_INCOME => 'Investment income',
+                    self::INCOME__PAYCHECK => 'Paycheck',
+                ],
+            ],
+            self::INSURANCE => [
+                'label' => 'Insurance',
+                'options' => [
+                    self::INSURANCE__CAR => 'Car insurance',
+                    self::INSURANCE__HEALTH => 'Health insurance',
+                    self::INSURANCE__LIFE => 'Life insurance',
+                    self::INSURANCE__PROPERTY => 'Property insurance',
+                ],
+            ],
+            self::KIDS => [
+                'label' => 'Kids',
+                'options' => [
+                    self::KIDS__ALLOWANCE => 'Allowance',
+                    self::KIDS__BABYSITTER_DAYCARE => 'Babysitter and daycare',
+                    self::KIDS__SUPPLIES => 'Baby supplies',
+                    self::KIDS__CHILD_SUPPORT => 'Child support',
+                    self::KIDS__KIDS_ACTIVITY => 'Kids activities',
+                    self::KIDS__TOYS => 'Toys',
+                ],
+            ],
+            self::PETS => [
+                'label' => 'Pets',
+                'options' => [
+                    self::PETS__FOOD_SUPPLIES => 'Pet food and supplies',
+                    self::PETS__GROOMING => 'Pet grooming',
+                    self::PETS__VETERINARY => 'Veterinary',
+                ],
+            ],
+            self::SHOPPING => [
+                'label' => 'Shopping',
+                'options' => [
+                    self::SHOPPING__CLOTHING => 'Clothing',
+                    self::SHOPPING__ELECTRONICS_SOFTWARE => 'Electronics and software',
+                    self::SHOPPING__SPORTING_GOOD => 'Sporting goods',
+                ],
+            ],
+            self::TRANSFER => [
+                'label' => 'Transfer',
+            ],
+            self::TRAVEL => [
+                'label' => 'Travel',
+                'options' => [
+                    self::TRAVEL_HOTEL => 'Hotel',
+                    self::TRAVEL_TRANSPORTATION => 'Transportation',
+                    self::TRAVEL_VACATION => 'Vacation',
+                ],
+            ],
+            self::UNCATEGORIZED => [
+                'label' => 'Uncategorized',
+            ],
+        ];
+    }
+    
     public static function is_valid($type)
     {
         return in_array($type, self::all());
